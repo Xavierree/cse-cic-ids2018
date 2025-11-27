@@ -69,22 +69,94 @@ Struktur direktori yang diharapkan:
 **Parameter yang berguna**
 - `SAMPLING_RATE`: Jika RAM terbatas, kurangi nilai ini (mis. ubah 1 menjadi 0.1 untuk menggunakan 10% data).
 
-**Troubleshooting**
-- MemoryError: Kurangi `SAMPLING_RATE`, atau gunakan Google Colab dengan GPU dan runtime yang lebih kuat.
-- Gdown Error / Permission Denied: Gunakan Kaggle API atau unduh manual dari Kaggle.
+**Menjalankan Streamlit Dashboard (IDS Mitigation)**
+
+Proyek ini dilengkapi dengan aplikasi Streamlit interaktif (`app.py`) untuk analisis trafik jaringan secara real-time. Ada dua cara untuk menjalankannya:
+
+**Opsi 1: Dari Google Colab (Generate Model)**
+
+1. Setelah selesai melatih model di notebook Colab, download model yang telah disimpan:
+   ```
+   # Di Colab, download file model:
+   files.download('ids_model_final.pkl')
+   ```
+
+2. Pindahkan file `ids_model_final.pkl` ke folder yang sama dengan `app.py` (folder `cse-cic-ids2018/`).
+
+3. Setup environment lokal jika belum:
+   ```bash
+   # Buat virtual environment
+   python -m venv venv
+   
+   # Aktivasi (Windows)
+   venv\Scripts\Activate
+   
+   # Atau aktivasi (Mac/Linux)
+   source venv/bin/activate
+   
+   # Install dependensi
+   pip install -r requirements.txt
+   ```
+
+4. Jalankan aplikasi Streamlit:
+   ```bash
+   streamlit run app.py
+   ```
+   
+   Aplikasi akan terbuka di browser pada `http://localhost:8501`.
+
+**Opsi 2: Menjalankan Langsung Lokal (Model Sudah Terlatih)**
+
+Jika Anda sudah memiliki file model `ids_model_final.pkl` dari proses training sebelumnya:
+
+1. Pastikan file `ids_model_final.pkl` berada di folder yang sama dengan `app.py`.
+
+2. Setup environment dan jalankan:
+   ```bash
+   # Aktivasi virtual environment
+   source venv/bin/activate  # Mac/Linux
+   # atau
+   venv\Scripts\Activate     # Windows
+   
+   # Jalankan Streamlit
+   streamlit run app.py
+   ```
+
+3. Buka browser dan navigasi ke `http://localhost:8501`.
+
+**Fitur Dashboard:**
+
+- **Batch CSV Upload**: Upload file CSV/Excel berisi network logs untuk analisis massal.
+  - Download template jika perlu membuat file manual.
+  - Download dummy data untuk simulasi testing.
+  
+- **Single Simulation**: Simulasi trafik manual dengan memasukkan parameter jaringan secara individual.
+  - Inputkan detail paket (port, protocol, flags, timing).
+  - Sistem akan menghasilkan prediksi attack type dan action mitigation.
+
+- **SOC Playbook**: Untuk setiap ancaman terdeteksi, sistem menghasilkan:
+  - Severity level
+  - Mitigation action
+  - Recommended script
+  - Command bash yang dapat dijalankan
+
+**Troubleshooting Dashboard:**
+- **Model: Offline (File tidak ditemukan)**: Pastikan `ids_model_final.pkl` berada di folder yang sama dengan `app.py`.
+- **Import Error (streamlit not found)**: Jalankan `pip install streamlit` atau pastikan virtual environment sudah diaktifkan.
+- **Port already in use**: Gunakan flag `--server.port` untuk mengubah port:
+  ```bash
+  streamlit run app.py --server.port 8502
+  ```
+
+**Troubleshooting Training Model:**
+- **MemoryError**: Kurangi `SAMPLING_RATE`, atau gunakan Google Colab dengan GPU dan runtime yang lebih kuat.
+- **Gdown Error / Permission Denied**: Gunakan Kaggle API atau unduh manual dari Kaggle.
 
 **Konten File Penting**
 - `UAS_Final_Colab_keamanan_data_py (1).ipynb`: Notebook utama berisi preprocessing, training, dan evaluasi model.
 - `requirements.txt`: Daftar dependensi Python.
 - `data/`: Folder dataset (tidak disertakan di repo karena besar).
-
-**Tips**
-- Gunakan Google Colab untuk percobaan awal atau saat RAM lokal terbatas.
-- Untuk eksperimen cepat, kurangi `SAMPLING_RATE` atau gunakan subset dataset.
-
-Jika Anda ingin, saya bisa:
-- Menambahkan badge, lisensi, atau petunjuk setup Docker/Conda.
-- Menyediakan skrip kecil untuk mengunduh subset dataset dan menjalankan contoh training cepat.
+- `app.py`: kode streamlit berisi simulasi penggunaan model
 
 ---
 Nama proyek: **Xavierree — IDS CSE-CIC-IDS2018**
